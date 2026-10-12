@@ -1,34 +1,51 @@
 
+"use strict";
+
 require("dotenv").config();
 
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-
 const { predictImage } = require("./predict");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.use(express.static(path.join(__dirname, "../frontend")));
+
+const frontendPath = path.resolve(__dirname, "../frontend/public");
+
+// Serve frontend files
+app.use(express.static(frontendPath));
+
+// Homepage
+app.get("/", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
+});
+app.get("/debug-home", (req, res) => {
+  res.json({
+    frontendPath,
+    indexExists: require("fs").existsSync(
+      path.join(frontendPath, "index.html")
+    )
+  });
+});
+// Image upload configuration
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 5 * 1024 * 1024
-  },
-  fileFilter: (req, file, cb) => {
-    if (
-      file.mimetype !== "image/jpeg" &&
-      file.mimetype !== "image/png"
-    ) {
-      return cb(
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, callback) => {
+    const allowedTypes = ["image/jpeg", "image/png"];
+
+    if (!allowedTypes.includes(file.mimetype)) {
+      return callback(
         new Error("Only JPG and PNG images are allowed.")
       );
     }
 
-    cb(null, true);
+    callback(null, true);
   }
 });
 
+// Health check
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
@@ -38,62 +55,52 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-app.post(
-  "/api/analyze",
-  upload.single("image"),
-  async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({
-          success: false,
-          error: "Please upload an image."
-        });
-      }
-
-      console.log("\n--- New image analysis ---");
-      console.log("File:", req.file.originalname);
-      console.log("Size:", req.file.size);
-      console.log("Type:", req.file.mimetype);
-
-      const result = await predictImage(
-        req.file.buffer,
-        req.file.mimetype
-      );
-
-      console.log("Sightengine result:", result);
-
-      return res.json({
-        success: true,
-        detectionProvider: "Sightengine",
-        fileName: req.file.originalname,
-        fileSize: req.file.size,
-        ...result
-      });
-
-    } catch (error) {
-      const apiError = error.response?.data;
-
-      console.error(
-        "Analysis failed:",
-        apiError || error.message
-      );
-
-      return res.status(502).json({
+// Image analysis
+app.post("/api/analyze", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
         success: false,
-        error:
-          apiError?.error?.message ||
-          error.message ||
-          "Image analysis failed."
+        error: "Please upload an image."
       });
     }
-  }
-);
 
+    const result = await predictImage(
+      req.file.buffer,
+      req.file.mimetype
+    );
+
+    return res.json({
+      success: true,
+      detectionProvider: "Sightengine",
+      fileName: req.file.originalname,
+      fileSize: req.file.size,
+      ...result
+    });
+  } catch (error) {
+    console.error(
+      "Image analysis failed:",
+      error.response?.data || error.message
+    );
+
+    return res.status(502).json({
+      success: false,
+      error:
+        error.response?.data?.error?.message ||
+        error.message ||
+        "Image analysis failed."
+    });
+  }
+});
+
+// Error handler
 app.use((error, req, res, next) => {
+  console.error("Request error:", error.message);
+
   const message =
     error.code === "LIMIT_FILE_SIZE"
       ? "Image must be smaller than 5 MB."
-      : error.message;
+      : error.message || "An unexpected error occurred.";
 
   return res.status(400).json({
     success: false,
@@ -101,18 +108,8 @@ app.use((error, req, res, next) => {
   });
 });
 
-const server = app.listen(PORT, () => {
-  console.log("\n==============================");
-  console.log(" PROOFMESH - SIGHTENGINE API");
-  console.log("==============================");
-  console.log(`Website: http://localhost:${PORT}`);
-  console.log("Version: sightengine-v2");
-  console.log("CNN model: DISABLED");
-  console.log("API: Sightengine");
-  console.log("==============================\n");
-});
-
-server.on("error", error => {
-  console.error("Server failed:", error.message);
-  process.exitCode = 1;
+// Start server
+app.listen(PORT, () => {
+  console.log(`ProofMesh server running on port ${PORT}`);
+  console.log(`Frontend directory: ${frontendPath}`);
 });

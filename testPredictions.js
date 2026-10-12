@@ -1,7 +1,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { loadModel, predictImage } = require("./predict");
+const { loadModel, predictImage } = require("./backend/predict");
 
 async function testClass(className) {
   const folder = path.join(

@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProofMesh | AI Image Verification</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <a href="#home" class="brand">
+      <span class="brand-icon">⬡</span>
+      Proof<span>Mesh</span>
+    </a>
+
+    <nav>
+      <a href="#home" class="active">Home</a>
+      <a href="#about">About</a>
+      <a href="#how">How It Works</a>
+      <a href="#footer">Contact</a>
+    </nav>
+
+    <div class="powered">
+      <span class="green-dot"></span> AI Powered
+    </div>
+  </header>
+
+  <main id="home" class="hero">
+
+    <div class="hero-copy">
+      <div class="eyebrow">
+        AI IMAGE AUTHENTICITY VERIFICATION SYSTEM
+      </div>
+
+      <h1>
+        Real or <span>Fake?</span><br>
+        Let <span>AI Decide.</span>
+      </h1>
+
+      <p class="intro">
+        ProofMesh helps you investigate whether an image
+        is real or AI-generated using deep learning.
+        Upload an image to receive a model prediction.
+      </p>
+
+      <div class="benefits">
+        <div>
+          <span class="benefit-icon">⬡</span>
+          <strong>AI Analysis</strong>
+          <small>CNN-powered classification</small>
+        </div>
+
+        <div>
+          <span class="benefit-icon">ϟ</span>
+          <strong>Simple</strong>
+          <small>Easy image uploads</small>
+        </div>
+
+        <div>
+          <span class="benefit-icon">♢</span>
+          <strong>Clear Results</strong>
+          <small>Prediction and confidence</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="visual-column">
+      <div class="illustration">
+  <div class="image-frame">
+    <img
+      src="/images/real-vs-fake.png"
+      alt="Real versus AI-generated image"
+    >
+  </div>
+</div>
+
+      <div class="upload-card">
+        <div class="upload-icon">⇧</div>
+        <h2>Upload an Image</h2>
+        <p>Choose a JPG or PNG image from your device</p>
+
+        <div class="drop-zone" id="dropZone">
+          <input
+            type="file"
+            id="imageInput"
+            accept="image/jpeg,image/png"
+            hidden
+          >
+
+          <div id="uploadPlaceholder">
+            <div class="picture-icon">▧</div>
+            <p>Drag & drop your image here</p>
+            <span>or</span>
+            <button type="button" id="chooseBtn">
+              Choose File
+            </button>
+          </div>
+
+          <img id="preview" alt="Image preview" hidden>
+        </div>
+
+        <div id="fileDetails" class="file-details" hidden>
+          <span id="fileName"></span>
+          <button type="button" id="removeBtn">✕</button>
+        </div>
+
+        <button type="button" id="analyzeBtn" class="analyze-btn">
+          ✧ Analyze Image
+        </button>
+
+        <p id="result" class="result"></p>
+
+        <small class="upload-note">
+          Supports JPG and PNG images (Max 5 MB)
+        </small>
+      </div>
+    </div>
+
+  </main>
+
+  <section id="how" class="how-section">
+    <h2>How It Works</h2>
+    <p>From upload to analysis in 3 simple steps</p>
+
+    <div class="steps">
+      <article>
+        <div class="step-icon blue">1</div>
+        <div>
+          <h3>Upload Image</h3>
+          <p>Choose or drag and drop an image.</p>
+        </div>
+      </article>
+
+      <article>
+        <div class="step-icon purple">2</div>
+        <div>
+          <h3>AI Analysis</h3>
+          <p>Our trained model examines image patterns.</p>
+        </div>
+      </article>
+
+      <article>
+        <div class="step-icon green">3</div>
+        <div>
+          <h3>Get Results</h3>
+          <p>See the predicted class and confidence.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="about" class="about">
+    ProofMesh is an educational image classifier.
+    Its predictions are not definitive proof of authenticity.
+  </section>
+
+  <footer id="footer">
+    ProofMesh · Building a more trustworthy digital world
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+node_modules
+# Private API credentials
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# CIFAKE dataset
+data/
+
+# Trained CNN models
+models/
+
+# Temporary files
+*.log
+curl.exe
+gitigore
